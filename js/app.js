@@ -1,15 +1,17 @@
 //Atribute
-let valScore = 0, pos =false, tempX, tempY,flag=0,
+let  pos =false, tempX, tempY,flag=0,
 //class enemy and player
-Enemy = function(x, y) {
+Enemy = function(x, y, s) {
     this.sprite = 'images/enemy-bug.png';
     this.x = x;
     this.y = y;
+    this.speed = s;
 },
 Player = function () {
     this.sprite = 'images/char-boy.png';
     this.x = 200;
     this.y = 320;
+    this.valScore=0;
 },
 //--------------------//
 //object of type enemy with the value of her creation x, y for parameter
@@ -19,17 +21,17 @@ player = new Player();
 //call initial enemy with the value of
 initializeEnemy(5);
 //------------------------//
-$('#Score').html(valScore);
+$('.score').html(player.valScore);
 //Methods
 //Update of ubication X from enemy and player
-function initializeEnemy(nBug)
-{
+function initializeEnemy(nBug){
   for(let x=0;x<nBug;x++)
   {
     flag++;
     positionRandomX()
     positionRandomY(flag);
-    allEnemies[x]=new Enemy(tempX, tempY);
+    let sp = Math.floor((Math.random() * 500) + 1);
+    allEnemies[x]=new Enemy(tempX, tempY, sp);
     if(flag===3)
     {
       flag=0;
@@ -37,8 +39,7 @@ function initializeEnemy(nBug)
   }
 }
 //obtain position X random
-function positionRandomX()
-{
+function positionRandomX(){
   tempX = Math.floor(((Math.random() * 200) + 1)-1);
 }
 //obtain position Y;
@@ -57,32 +58,29 @@ function positionRandomY(fla){
     }
 }
 //function for reset the score when is call
-function resetScore()
-{
-  valScore = 0;
-  $('#Score').html(valScore);
+function resetScore(){
+  player.valScore = 0;
+  $('.score').html(player.valScore);
 }
 //function that determines if there was a collision
-function collision(x,y){
-  if ((y < player.y + 50 && y + 30 > player.y)&&(x < player.x + 30 && x + 50 > player.x))
-    return true;
-  else
-    return false;
+Enemy.prototype.checkCollisions=function(){
+  if ((this.y < player.y + 50 && this.y + 50 > player.y)&&(this.x < player.x + 40 && this.x + 50 > player.x)){
+    gameOver();
+  }
+  
 }
 //parameter gO is type boolean and indicate if is GameOver
-function gameOver(gO) {
-  if(gO)
-  {
+function gameOver(){
+  
   player.reset();
-  $('#mScore').html(valScore);
-  $('#dialog').dialog('open');
+  $('.mScore').html(player.valScore);
+  $('.dialog').dialog('open');
   resetScore();
-  }
+ 
 }
 Enemy.prototype.update = function(dt) {
-    if (this.x < 505) {
-      var ran = Math.floor((Math.random() * 500) + 1);
-        this.x += (ran * dt);
+    if (this.x < 505) {     
+        this.x += (this.speed * dt);
     }
     else {
       var fla =Math.floor(Math.random() * (3-1 + 1) + 1);
@@ -93,13 +91,13 @@ Enemy.prototype.update = function(dt) {
     }
 
 // function for detection of collision and gameover
-gameOver(collision(this.x,this.y));
+
 };
 Player.prototype.update = function() {
-	if (player.y < 20){
-	valScore++;
-	$('#Score').html(valScore);
-	this.reset();
+	if (this.y < 20){
+	  this.valScore++;
+	$('.score').html(this.valScore);
+	  this.reset();
   }
 };
 //------------------------//
@@ -113,31 +111,31 @@ Player.prototype.render = function() {
 //--------------------------//
 //function for move to player in the scenary
 Player.prototype.handleInput = function(arrow) {
-  switch(arrow)
-  {
-    case 'left':
-    if(this.x>0)
-    this.x-=50;
-    break;
-    case 'right':
-    if(this.x<400)
-    this.x+=50;
-    break;
-    case 'up':
-    if(this.y>0)
-    this.y-=50;
-    break;
-    case "down":
-    if(this.y<400)
-    this.y+=50;
-    break;
+  switch (arrow) {
+      case 'left':
+          if (this.x > 0)
+              this.x -= 50;
+          break;
+      case 'right':
+          if (this.x < 400)
+              this.x += 50;
+          break;
+      case 'up':
+          if (this.y > 0)
+              this.y -= 50;
+          break;
+      case "down":
+          if (this.y < 400)
+              this.y += 50;
+          break;
   }
 };
 //--------------------------//
 //initialize ubication of the player
 Player.prototype.reset = function() {
-    player = new Player();
-
+    player.y=320;
+    player.x=200;
+    //player.valScore=0;
 };
 //-------------------------//
 //listener
@@ -153,7 +151,7 @@ document.addEventListener('keyup', function(e) {
 });
 $(document).ready(function(){
   //popup Game Over
-$( '#dialog' ).dialog( { 'autoOpen': false, 'buttons':{finish: function() {
+$( '.dialog' ).dialog( { 'autoOpen': false, 'buttons':{finish: function() {
           $( this ).dialog( "close" );
           initializeEnemy(5);
         }}} );
