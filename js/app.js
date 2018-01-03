@@ -25,8 +25,7 @@ $('.score').html(player.valScore);
 //Methods
 //Update of ubication X from enemy and player
 function initializeEnemy(nBug){
-  for(let x=0;x<nBug;x++)
-  {
+  for(let x=0;x<nBug;x++){
     flag++;
     positionRandomX()
     positionRandomY(flag);
@@ -133,8 +132,8 @@ Player.prototype.handleInput = function(arrow) {
 //--------------------------//
 //initialize ubication of the player
 Player.prototype.reset = function() {
-    player.y=320;
-    player.x=200;
+    this.y=320;
+    this.x=200;
     //player.valScore=0;
 };
 //-------------------------//
